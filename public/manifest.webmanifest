@@ -1,0 +1,20 @@
+{
+  "name": "VanSanchar",
+  "short_name": "VanSanchar",
+  "description": "Bridging Communities & Wildlife",
+  "start_url": "/app/home",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ECF5EC",
+  "theme_color": "#2D5016",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Report", "url": "/app/home?action=report", "icons": [{ "src": "/icon.svg", "sizes": "any" }] },
+    { "name": "SOS", "url": "/app/home?action=sos", "icons": [{ "src": "/icon.svg", "sizes": "any" }] },
+    { "name": "Map", "url": "/app/map", "icons": [{ "src": "/icon.svg", "sizes": "any" }] }
+  ]
+}
