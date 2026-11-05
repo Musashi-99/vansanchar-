@@ -1,5 +1,5 @@
 // Minimal app-shell service worker. Caches only same-origin GET static assets.
-const CACHE = 'vansanchar-shell-v1';
+const CACHE = 'vansanchar-shell-v2';
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(['/', '/icon.svg', '/manifest.webmanifest'])).then(() => self.skipWaiting()));
 });

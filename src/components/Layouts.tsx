@@ -102,11 +102,18 @@ function MoreMenu() {
   );
 }
 
+const OFFICIAL_ROLES: Role[] = ['forest_guard', 'range_officer', 'deputy_ranger', 'dfo', 'platform_admin'];
+export function homeFor(role: Role) {
+  if (role === 'platform_admin') return '/admin/dashboard';
+  if (OFFICIAL_ROLES.includes(role)) return '/official/overview';
+  return '/app/home';
+}
+
 export function RequireAuth({ roles, children }: { roles: 'citizen' | 'official' | 'admin'; children: ReactNode }) {
   const user = useStore((s) => s.user);
   const loc = useLocation();
   if (!user) return <Navigate to={`/login?role=${roles}`} state={{ from: loc.pathname }} replace />;
-  const isOff = (['forest_guard', 'range_officer', 'deputy_ranger', 'dfo', 'platform_admin'] as Role[]).includes(user.role);
+  const isOff = OFFICIAL_ROLES.includes(user.role);
   const ok = roles === 'citizen' ? !isOff : roles === 'admin' ? user.role === 'platform_admin' : isOff;
   if (!ok) return <Unauthorized />;
   return <>{children}</>;

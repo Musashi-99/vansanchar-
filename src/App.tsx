@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { CitizenLayout, RequireAuth } from './components/Layouts';
+import { CitizenLayout, RequireAuth, homeFor } from './components/Layouts';
+import { useStore } from './lib/store';
 import { SidebarShell } from './neon/Shells';
 import { Spinner } from './components/ui';
 
@@ -63,11 +64,17 @@ const NotFound = () => (
     <a href="/" className="rounded-xl bg-primary px-4 py-2 text-primary-fg">Go home</a></div>
 );
 
+function Entry() {
+  const user = useStore((s) => s.user);
+  return <Navigate to={user ? homeFor(user.role) : '/login'} replace />;
+}
+
 export default function App() {
   return (
     <Suspense fallback={<div className="mesh min-h-dvh"><Spinner /></div>}>
       <Routes>
-        <Route path="/" element={<Landing />} />
+        <Route path="/" element={<Entry />} />
+        <Route path="/welcome" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/official/login" element={<OfficialLogin />} />

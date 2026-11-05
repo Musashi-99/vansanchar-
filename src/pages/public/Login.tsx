@@ -1,11 +1,12 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Link, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams, useLocation, Navigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import gsap from 'gsap';
-import { User, ShieldCheck, Settings2, Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import { User, ShieldCheck, Settings2, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button, Field, Input } from '../../components/ui';
 import { useStore } from '../../lib/store';
+import { homeFor } from '../../components/Layouts';
 import { DEMO_CITIZEN, OFFICIALS } from '../../lib/seed';
 import { normalizeIndianPhone } from '../../lib/utils';
 import { useT } from '../../lib/i18n';
@@ -65,6 +66,7 @@ export default function Login() {
   const [sp] = useSearchParams();
   const login = useStore((s) => s.login);
   const users = useStore((s) => s.users);
+  const session = useStore((s) => s.user);
   const initial = (['citizen', 'official', 'admin'] as Portal[]).find((p) => p === sp.get('role')) ?? 'citizen';
   const [portal, setPortal] = useState<Portal>(initial);
   const [mode, setMode] = useState<'phone' | 'email'>(initial === 'citizen' ? 'phone' : 'email');
@@ -110,13 +112,13 @@ export default function Login() {
   };
   const demos = OFFICIALS.filter((o) => (portal === 'admin') === (o.role === 'platform_admin'));
   const fill = (e: string, p: string) => { setEmail(e); setPw(p); setErr(''); };
+  if (session) return <Navigate to={homeFor(session.role)} replace />;
 
   return (
     <div ref={root} className="nf relative flex min-h-dvh items-center justify-center overflow-hidden p-4">
       <div className="lg-orb pointer-events-none absolute -left-24 top-10 h-72 w-72 rounded-full bg-[#a8f43a]/10 blur-3xl" />
       <div className="lg-orb pointer-events-none absolute -right-20 bottom-0 h-80 w-80 rounded-full bg-[#2a9d4a]/20 blur-3xl" />
       <div className="relative w-full max-w-md space-y-4">
-        <Link to="/" className="lg-in inline-flex items-center gap-1 text-sm text-[var(--muted)] hover:text-[var(--nf-lime)]"><ArrowLeft className="h-4 w-4" />Back to home</Link>
         <div className="lg-in text-center">
           <img src="/icon.svg" width={56} height={56} alt="" className="mx-auto rounded-full" />
           <h1 className="mt-2 text-3xl font-extrabold tracking-tight">Van<span className="text-[var(--nf-lime)]">Sanchar</span></h1>
@@ -131,7 +133,7 @@ export default function Login() {
                 {on && <motion.span layoutId="portal-pill" className="absolute inset-0 rounded-2xl bg-[#2a5a1c]/80 shadow-[0_0_18px_rgba(168,244,58,.3)]" transition={{ type: 'spring', stiffness: 420, damping: 32 }} />}
                 <p.icon className={`relative h-6 w-6 ${on ? 'text-[var(--nf-lime)]' : ''}`} />
                 <span className="relative text-[13px] font-bold leading-tight">{p.label}</span>
-                <span className="relative hidden text-[10.5px] leading-tight sm:block">{p.sub}</span>
+                <span className="relative text-[10.5px] leading-tight">{p.sub}</span>
               </button>
             );
           })}

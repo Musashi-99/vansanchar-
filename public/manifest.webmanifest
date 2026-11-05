@@ -2,7 +2,7 @@
   "name": "VanSanchar",
   "short_name": "VanSanchar",
   "description": "Bridging Communities & Wildlife",
-  "start_url": "/app/home",
+  "start_url": "/login",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
