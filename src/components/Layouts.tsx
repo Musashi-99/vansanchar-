@@ -8,7 +8,7 @@ import { useStore } from '../lib/store';
 import { useUI, useOnline, useInstallPrompt } from '../lib/hooks';
 import { useT, LANGS } from '../lib/i18n';
 import { cn } from '../lib/utils';
-import { Modal, Button, Select, Switch } from './ui';
+import { Modal, Button, Select, Switch, Spinner } from './ui';
 import ReportForm from './ReportForm';
 import { SOSButton, SOSFlow } from './SOS';
 import type { Role } from '../lib/types';
@@ -109,23 +109,22 @@ export function homeFor(role: Role) {
   return '/app/home';
 }
 
+export function useHydrated() {
+  const [ready, setReady] = useState(() => useStore.persist.hasHydrated());
+  useEffect(() => {
+    if (useStore.persist.hasHydrated()) setReady(true);
+    return useStore.persist.onFinishHydration(() => setReady(true));
+  }, []);
+  return ready;
+}
+
 export function RequireAuth({ roles, children }: { roles: 'citizen' | 'official' | 'admin'; children: ReactNode }) {
   const user = useStore((s) => s.user);
+  const ready = useHydrated();
   const loc = useLocation();
-  if (!user) return <Navigate to={`/login?role=${roles}`} state={{ from: loc.pathname }} replace />;
-  const isOff = OFFICIAL_ROLES.includes(user.role);
-  const ok = roles === 'citizen' ? !isOff : roles === 'admin' ? user.role === 'platform_admin' : isOff;
-  if (!ok) return <Unauthorized />;
+  if (!ready) return <div className="mesh flex min-h-dvh items-center justify-center"><Spinner /></div>;
+  if (!user) return <Navigate to={`/login?role=${roles}`} state={{ from: loc.pathname + loc.search }} replace />;
   return <>{children}</>;
-}
-export function Unauthorized() {
-  return (
-    <div className="mesh flex min-h-dvh flex-col items-center justify-center gap-3 p-6 text-center">
-      <Lock className="h-12 w-12 text-danger" /><h1 className="text-xl font-bold">Not authorised</h1>
-      <p className="max-w-xs text-sm text-muted">Your account role does not have access to this area.</p>
-      <Link to="/" className="rounded-xl2 bg-primary px-4 py-2 text-primary-fg">Go to start</Link>
-    </div>
-  );
 }
 
 const NAV = [

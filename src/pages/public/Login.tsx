@@ -112,7 +112,10 @@ export default function Login() {
   };
   const demos = OFFICIALS.filter((o) => (portal === 'admin') === (o.role === 'platform_admin'));
   const fill = (e: string, p: string) => { setEmail(e); setPw(p); setErr(''); };
-  if (session) return <Navigate to={homeFor(session.role)} replace />;
+  if (session) {
+    const back = from && (from.startsWith('/app') || from.startsWith('/official') || from.startsWith('/admin')) ? from : homeFor(session.role);
+    return <Navigate to={back} replace />;
+  }
 
   return (
     <div ref={root} className="nf relative flex min-h-dvh items-center justify-center overflow-hidden p-4">

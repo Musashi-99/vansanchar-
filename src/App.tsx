@@ -1,6 +1,6 @@
 import { lazy, Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { CitizenLayout, RequireAuth, homeFor } from './components/Layouts';
+import { CitizenLayout, RequireAuth, homeFor, useHydrated } from './components/Layouts';
 import { useStore } from './lib/store';
 import { SidebarShell } from './neon/Shells';
 import { Spinner } from './components/ui';
@@ -66,6 +66,8 @@ const NotFound = () => (
 
 function Entry() {
   const user = useStore((s) => s.user);
+  const ready = useHydrated();
+  if (!ready) return <div className="mesh min-h-dvh"><Spinner /></div>;
   return <Navigate to={user ? homeFor(user.role) : '/login'} replace />;
 }
 
